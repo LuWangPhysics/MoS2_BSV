@@ -6,32 +6,29 @@ addpath('My_Functions');
 addpath('My_Output');
 addpath('My_Data');
 
-addpath([' /home/lu/UO_Documents/my_plot_scheme']);
-addpath([' /home/lu/UO_Documents/my_plot_scheme/print_file']);
-	% ========================== define constants==============================
-
-	C=Const;
-	C=C.init();
-	% ========================== material and driving laser parameters ========
-	MF=Material_and_Field;
-	M_name='MoS2';
-	E0=5e8;
+	    % ========================== define constants==============================
+	    C=Const;
+	    C=C.init();
+	    % ========================== material and driving laser parameters ========
+	    MF=Material_and_Field;
+	    M_name='MoS2';
+	    E0=5e8;
 
 
-	angle_arr=[0*pi/3];
-	order_select=[2,3,4,5,6];
+	    angle_arr=[0*pi/3];
+	    order_select=[2,3,4,5,6];
 
 
-	MF=MF.init_field(C,E0);
-	MF=MF.init_material(C,M_name,angle_arr);
+	    MF=MF.init_field(C,E0);
+	    MF=MF.init_material(C,M_name,angle_arr);
 
 
-	% ========================== set-up heat bath general T numerical =========
-	C.T=300;                                  %heat bath temperature K
-	jo=2;         				  %heat bath coupling strength
-	om_cutoff =200*(2*pi*1e12);               %heat bath cutoff frequency                                 
-	s_iter=1;  				  %BSV center frequency
-	s_E_arr=1;   			 	  %BSV energy      
+	    % ========================== set-up heat bath general T numerical =========
+	    C.T=300;                                  %heat bath temperature K
+	    jo=2;         				              %heat bath coupling strength
+	    om_cutoff =200*(2*pi*1e12);               %heat bath cutoff frequency                                 
+	    s_iter=1;  				                  %BSV center frequency
+	    s_E_arr=1;   			 	              %BSV energy      
 
 
         %analytical_heat_bath_T(C,MF,om_cutoff,jo);
@@ -53,9 +50,9 @@ addpath([' /home/lu/UO_Documents/my_plot_scheme/print_file']);
   
 
 
-        R=Rho;
-        R=R.init(Jt_FT,MF,C,MF.ky,MF.ky,MF.kz,s_iter,s_E_arr);
-        R=R.Jt_construct(C,MF);    
+         R=Rho;
+         R=R.init(Jt_FT,MF,C,MF.ky,MF.ky,MF.kz,s_iter,s_E_arr);
+         R=R.Jt_construct(C,MF);    
 
          N_t=length(MF.t_start:MF.t_end);%17;
          j_kxky_no=zeros(length(MF.kx),length(MF.ky),N_t);       
@@ -69,7 +66,7 @@ for ky_iter=ky_select
         %----------------------------------------
         %renew the time dependent material
         %----------------------------------------
-        MF=MF.renew_kt(MF,C,kx_iter,ky_iter,kz_iter);
+        MF=MF.renew_kt(MF,C,kx_iter,ky_iter,1);
 
         %----------------------------------------
         %calculate the ionization for a given k
@@ -80,10 +77,8 @@ for ky_iter=ky_select
         j_kxky_no(kx_iter,ky_iter,:)=R.j_no_k;
         j_kxky_t(kx_iter,ky_iter,:)=R.j_t_k;
         j_kxky_s(kx_iter,ky_iter,:)=R.j_s_k;
-
-        
-
-    end
+ 
+        end
 end
 
 
@@ -92,8 +87,6 @@ end
 P.plot_rho2(MF,R,C.T)
 P.plot_J_total_xy(MF,R,C.T,order_select);
 P.plot_J_total_pv(MF,R,C.T,order_select);
-P.plot_J_total_pv_t(MF,R,C.T,order_select);
-P.plot_J_total_pv_t_given_order(MF,R,C.T, order_select);
 P.j_kxky(MF,j_kxky_no,j_kxky_t,j_kxky_s);
 
 
